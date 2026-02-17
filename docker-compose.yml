@@ -1,0 +1,17 @@
+name: gosift
+
+services:
+    localstack:
+        container_name: gosift-localstack
+        image: localstack/localstack-pro:latest # Pro feature
+        ports:
+            - '4566:4566'
+            - '4510-4559:4510-4559'
+        environment:
+            - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+            # - SERVICES=dynamodb,s3,rds # Pro feature
+            - DEBUG=1
+            - DOCKER_HOST=unix:///var/run/docker.sock
+        volumes:
+            - './scripts/aws:/etc/localstack/init/ready.d'
+            - '/var/run/docker.sock:/var/run/docker.sock' # Pro feature

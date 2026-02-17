@@ -8,8 +8,16 @@ Backend API Gateway for Gosift built with Go and Gin. This repo is focused on th
 
 ## Run locally
 
+Use your own '.env' file
+
 ```bash
-go run ./cmd
+cp .env.example .env
+```
+
+Then run the server:
+
+```bash
+go run ./cmd/server
 ```
 
 ## API surface (starter)

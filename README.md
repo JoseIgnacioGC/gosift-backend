@@ -17,6 +17,7 @@ cp .env.example .env
 Then run the server:
 
 ```bash
+docker compose up
 go run ./cmd/server
 ```
 

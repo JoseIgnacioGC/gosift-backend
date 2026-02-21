@@ -1,4 +1,4 @@
-package handlers
+package health
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func HealthCheck(awsClient *aws.Client) gin.HandlerFunc {
+func getHealthCheck(awsClient *aws.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()
@@ -19,12 +19,12 @@ func HealthCheck(awsClient *aws.Client) gin.HandlerFunc {
 		dbStatus := "connected"
 		if err != nil {
 			dbStatus = fmt.Sprintf("[ERROR]: %v", err)
-
-			c.JSON(http.StatusOK, gin.H{
-				"status":   "active",
-				"platform": "LocalStack Pro",
-				"database": dbStatus,
-			})
 		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"status":   "active",
+			"platform": "LocalStack Pro",
+			"database": dbStatus,
+		})
 	}
 }

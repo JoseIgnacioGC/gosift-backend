@@ -6,25 +6,25 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/JoseIgnacioGC/gosift-backend/internal/api/handlers"
 	"github.com/JoseIgnacioGC/gosift-backend/internal/config"
 	"github.com/JoseIgnacioGC/gosift-backend/internal/platform/aws"
+	"github.com/JoseIgnacioGC/gosift-backend/internal/router"
 )
 
 func main() {
 	ginConfig := config.Get()
 
-	ctx := context.Background()
-	awsClient, err := aws.NewClient(ctx)
+	awsClient, err := aws.NewClient(context.Background())
 	if err != nil {
-		log.Fatalf("Failed to initialize AWS: %v", err)
+		log.Fatalf("[ERROR] Failed to initialize AWS: %v", err)
 	}
 
-	router := gin.Default()
-	config.ConfigureProxies(router, ginConfig)
+	mainRouter := gin.Default()
 
-	router.GET("/health", handlers.HealthCheck(awsClient))
+	config.ConfigureProxies(mainRouter, ginConfig)
+	router.RegisterRoutes(mainRouter, awsClient)
 
-	log.Printf("gosift-backend running on http://localhost:%v\n", ginConfig.Port)
-	router.Run(":" + ginConfig.Port)
+	log.Printf("[INFO] running on http://localhost:%v\n", ginConfig.Port)
+	mainRouter.Run(":" + ginConfig.Port)
+
 }

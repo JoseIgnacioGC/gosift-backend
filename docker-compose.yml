@@ -12,9 +12,12 @@ services:
             # - SERVICES=dynamodb,s3,rds # Pro feature
             - DEBUG=1
             - DOCKER_HOST=unix:///var/run/docker.sock
+              - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN:?}
+            - PERSISTENCE=1
         volumes:
             - './scripts/aws:/etc/localstack/init/ready.d'
             - '/var/run/docker.sock:/var/run/docker.sock' # Pro feature
+            - '${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack'
         healthcheck:
             test:
                 [
@@ -27,3 +30,14 @@ services:
             timeout: 5s
             retries: 5
             start_period: 10s
+    dynamodb-admin:
+        image: aaronshaf/dynamodb-admin
+        ports:
+            - '8001:8001'
+        environment:
+            DYNAMO_ENDPOINT: http://localstack:4566
+            AWS_REGION: us-east-1
+            AWS_ACCESS_KEY_ID: test
+            AWS_SECRET_ACCESS_KEY: test
+        depends_on:
+            - localstack

@@ -13,6 +13,7 @@ type GinConfig struct {
 	TrustedProxies []string `env:"TRUSTED_PROXIES" envSeparator:"," envDefault:"*"`
 	GinMode        string   `env:"GIN_MODE" envDefault:"debug"`
 	Port           string   `env:"PORT" envDefault:"8080"`
+	JWTSecret      string   `env:"JWT_SECRET,required"`
 }
 
 var (

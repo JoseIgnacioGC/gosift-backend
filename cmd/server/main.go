@@ -22,7 +22,7 @@ func main() {
 	mainRouter := gin.Default()
 
 	config.ConfigureProxies(mainRouter, ginConfig)
-	router.RegisterRoutes(mainRouter, awsClient)
+	router.RegisterRoutes(mainRouter, awsClient, ginConfig.JWTSecret)
 
 	log.Printf("[INFO] running on http://localhost:%v\n", ginConfig.Port)
 	mainRouter.Run(":" + ginConfig.Port)

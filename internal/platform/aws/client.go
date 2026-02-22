@@ -15,8 +15,10 @@ type Client struct {
 }
 
 func NewClient(ctx context.Context) (*Client, error) {
+	awsRegion := "us-east-1"
+
 	cfg, err := config.LoadDefaultConfig(ctx,
-		config.WithRegion("us-east-1"),
+		config.WithRegion(awsRegion),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("unable to load SDK config: %v", err)

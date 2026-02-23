@@ -5,6 +5,8 @@ Backend API Gateway for Gosift built with Go and Gin. This repo is focused on th
 ## Prerequisites
 
 - Go 1.25+
+- Localstack
+- awscli
 
 ## Run locally
 
@@ -22,5 +24,11 @@ go run ./cmd/server
 ```
 
 ## API surface (starter)
+
+| Endpoint        | Description      |
+| --------------- | ---------------- |
+| `/api/v1`       |                  |
+| `/api/v1/auth`  | register/login.  |
+| `/api/v1/users` | CRUD operations. |
 
 <!-- - `GET /ping`: health check returning `{"message":"pong"}` -->

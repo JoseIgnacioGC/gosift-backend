@@ -33,6 +33,7 @@ func newService(userRepo *users.Repository, jwtSecret string) *service {
 	return &service{userRepo: userRepo, jwtSecret: jwtSecret}
 }
 
+// TODO: Implement email verification to prevent timing attacks. Send a verification link to the user's email.
 func (s *service) register(ctx context.Context, req RegisterRequestDto) (*ResponseDto, error) {
 	existing, err := s.userRepo.FindByEmail(ctx, strings.ToLower(req.Email))
 	if err != nil {

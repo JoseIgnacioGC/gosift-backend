@@ -18,6 +18,19 @@ type User struct {
 	UpdatedAt     time.Time `dynamodbav:"UpdatedAt,unixtime"`
 }
 
+type UserUpdate struct {
+	Email         *string    `dynamodbav:"Email,omitempty"`
+	Username      *string    `dynamodbav:"Username,omitempty"`
+	PasswordHash  *string    `dynamodbav:"PasswordHash,omitempty"`
+	Name          *string    `dynamodbav:"Name,omitempty"`
+	AvatarURL     *string    `dynamodbav:"AvatarURL,omitempty"`
+	Timezone      *string    `dynamodbav:"Timezone,omitempty"`
+	Language      *string    `dynamodbav:"Language,omitempty"`
+	EmailVerified *bool      `dynamodbav:"EmailVerified,omitempty"`
+	LastLoginAt   *time.Time `dynamodbav:"LastLoginAt,unixtime,omitempty"`
+	UpdatedAt     *time.Time `dynamodbav:"UpdatedAt,unixtime,omitempty"`
+}
+
 const (
 	TableName  = "Users"
 	PKPrefix   = "USER#"

@@ -89,3 +89,36 @@ func (r *Repository) FindByEmail(ctx context.Context, email string) (*User, erro
 
 	return &user, nil
 }
+
+func (r *Repository) UpdateFields(ctx context.Context, pk string, fields *UserUpdate) error {
+	item, err := attributevalue.MarshalMap(fields)
+	if err != nil {
+		return fmt.Errorf("failed to marshal update fields: %w", err)
+	}
+
+	update := expression.UpdateBuilder{}
+	for key, val := range item {
+		update = update.Set(expression.Name(key), expression.Value(val))
+	}
+
+	expr, err := expression.NewBuilder().WithUpdate(update).Build()
+	if err != nil {
+		return fmt.Errorf("failed to build update expression: %w", err)
+	}
+
+	_, err = r.db.UpdateItem(ctx, &dynamodb.UpdateItemInput{
+		TableName: aws.String(TableName),
+		Key: map[string]types.AttributeValue{
+			"PK": &types.AttributeValueMemberS{Value: pk},
+			"SK": &types.AttributeValueMemberS{Value: SKMetadata},
+		},
+		UpdateExpression:          expr.Update(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to update user fields: %w", err)
+	}
+
+	return nil
+}

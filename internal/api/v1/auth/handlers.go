@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func register(service *Service) gin.HandlerFunc {
+func register(service *service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req RegisterRequestDto
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -16,9 +16,9 @@ func register(service *Service) gin.HandlerFunc {
 			return
 		}
 
-		resp, err := service.Register(c.Request.Context(), req)
+		resp, err := service.register(c.Request.Context(), req)
 		if err != nil {
-			if errors.Is(err, ErrEmailAlreadyExists) {
+			if errors.Is(err, errEmailAlreadyExists) {
 				c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 				return
 			}
@@ -28,5 +28,23 @@ func register(service *Service) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusCreated, resp)
+	}
+}
+
+func login(service *service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req LoginRequestDto
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "validation failed", "details": validation.FormatErrors(err)})
+			return
+		}
+
+		resp, err := service.login(c.Request.Context(), req)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, resp)
 	}
 }

@@ -9,7 +9,12 @@ type RegisterRequestDto struct {
 	Language string `json:"language" binding:"omitempty,bcp47_language_tag"`
 }
 
-type RegisterResponseDto struct {
+type LoginRequestDto struct {
+	Email    string `json:"email" binding:"required,email,max=254"`
+	Password string `json:"password" binding:"required,min=8,max=72"`
+}
+
+type ResponseDto struct {
 	ID        string `json:"id"`
 	Email     string `json:"email"`
 	Username  string `json:"username"`

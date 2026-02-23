@@ -8,9 +8,11 @@ import (
 
 func RegisterRoutes(group *gin.RouterGroup, awsClient *aws.Client, jwtSecret string) {
 	userRepo := users.NewRepository(awsClient.DynamoDB)
-	authService := NewService(userRepo, jwtSecret)
+	authService := newService(userRepo, jwtSecret)
 
 	auth := group.Group("/auth")
 
 	auth.POST("/register", register(authService))
+	auth.POST("/login", login(authService))
+
 }

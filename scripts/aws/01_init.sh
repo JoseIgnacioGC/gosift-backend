@@ -8,6 +8,7 @@ awslocal dynamodb create-table \
         AttributeName=PK,AttributeType=S \
         AttributeName=SK,AttributeType=S \
         AttributeName=Email,AttributeType=S \
+        AttributeName=FeedURL,AttributeType=S \
     --key-schema \
         AttributeName=PK,KeyType=HASH \
         AttributeName=SK,KeyType=RANGE \
@@ -21,6 +22,20 @@ awslocal dynamodb create-table \
                 "Projection": {
                     "ProjectionType": "INCLUDE",
                     "NonKeyAttributes": ["PK", "PasswordHash"]
+                },
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 5,
+                    "WriteCapacityUnits": 5
+                }
+            },
+            {
+                "IndexName": "FeedURLIndex",
+                "KeySchema": [
+                    {"AttributeName": "FeedURL", "KeyType": "HASH"},
+                    {"AttributeName": "PK", "KeyType": "RANGE"}
+                ],
+                "Projection": {
+                    "ProjectionType": "KEYS_ONLY"
                 },
                 "ProvisionedThroughput": {
                     "ReadCapacityUnits": 5,

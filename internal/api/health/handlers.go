@@ -18,7 +18,7 @@ func getHealthCheck(awsClient *aws.Client) gin.HandlerFunc {
 		_, err := awsClient.DynamoDB.ListTables(ctx, nil)
 		dbStatus := "connected"
 		if err != nil {
-			dbStatus = fmt.Sprintf("[ERROR]: %v", err)
+			dbStatus = fmt.Sprintf("error: %v", err)
 		}
 
 		c.JSON(http.StatusOK, gin.H{

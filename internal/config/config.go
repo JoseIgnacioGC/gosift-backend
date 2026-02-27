@@ -38,16 +38,20 @@ func Get() *GinConfig {
 }
 
 func ConfigureProxies(router *gin.Engine, ginConfig *GinConfig) {
-	if ginConfig.GinMode == "debug" || (len(ginConfig.TrustedProxies) > 0 && ginConfig.TrustedProxies[0] == "*") {
-		log.Println("[DEBUG WARNING]: All proxies are trusted.")
+	if ginConfig.GinMode == "debug" {
+		log.Println("[DEBUG WARNING]: Debug mode, all proxies are trusted.")
 		return
 	}
 
-	if len(ginConfig.TrustedProxies) == 0 {
-		log.Fatalln("[ERROR]: No trusted proxies configured in release. Set TRUSTED_PROXIES env var.")
+	if ginConfig.GinMode == "release" && (len(ginConfig.TrustedProxies) == 0 || ginConfig.TrustedProxies[0] == "*") {
+		log.Fatalln("[ERROR]: No trusted proxies configured in release. Set TRUSTED_PROXIES env var. (wildcard '*' is not allowed)")
 	}
 
-	log.Printf("[INFO]: Configuring trusted proxies: %v\n", ginConfig.TrustedProxies)
-	router.SetTrustedProxies(ginConfig.TrustedProxies)
+	if ginConfig.GinMode == "release" {
+		log.Printf("[INFO]: Configuring trusted proxies: %v\n", ginConfig.TrustedProxies)
+		router.SetTrustedProxies(ginConfig.TrustedProxies)
+		return
+	}
 
+	log.Fatalln("[ERROR]: Unknown gin mode. Set GIN_MODE env var to 'debug' or 'release', and set TRUSTED_PROXIES env var.")
 }

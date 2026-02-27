@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/JoseIgnacioGC/gosift-backend/internal/validation"
 	"github.com/JoseIgnacioGC/gosift-backend/internal/middleware"
+	"github.com/JoseIgnacioGC/gosift-backend/internal/validation"
 )
 
 func createSubscription(svc *service) gin.HandlerFunc {
@@ -24,6 +24,10 @@ func createSubscription(svc *service) gin.HandlerFunc {
 		if err != nil {
 			if errors.Is(err, errFeedAlreadySubscribed) {
 				c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+				return
+			}
+			if errors.Is(err, errInvalidFeed) {
+				c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 				return
 			}
 

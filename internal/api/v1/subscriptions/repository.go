@@ -76,9 +76,11 @@ func (r *Repository) ListByUser(ctx context.Context, userPK string) ([]Subscript
 }
 
 func (r *Repository) FindByUserAndFeedURL(ctx context.Context, userPK string, feedURL string) (*Subscription, error) {
-	keyCond := expression.Key("FeedURL").Equal(expression.Value(feedURL))
-	filter := expression.Name("PK").Equal(expression.Value(userPK))
-	expr, err := expression.NewBuilder().WithKeyCondition(keyCond).WithFilter(filter).Build()
+	keyCond := expression.KeyAnd(
+		expression.Key("FeedURL").Equal(expression.Value(feedURL)),
+		expression.Key("PK").Equal(expression.Value(userPK)),
+	)
+	expr, err := expression.NewBuilder().WithKeyCondition(keyCond).Build()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build query expression: %w", err)
 	}
@@ -87,7 +89,6 @@ func (r *Repository) FindByUserAndFeedURL(ctx context.Context, userPK string, fe
 		TableName:                 aws.String(users.TableName),
 		IndexName:                 aws.String(FeedURLIndex),
 		KeyConditionExpression:    expr.KeyCondition(),
-		FilterExpression:          expr.Filter(),
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
 	})

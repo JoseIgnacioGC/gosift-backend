@@ -2,7 +2,7 @@ package subscriptions
 
 type CreateRequestDto struct {
 	FeedURL  string `json:"feed_url" binding:"required,url,max=2048"`
-	Title    string `json:"title" binding:"required,min=1,max=200"`
+	Title    string `json:"title" binding:"omitempty,min=1,max=200"`
 	SiteURL  string `json:"site_url" binding:"omitempty,url,max=2048"`
 	Category string `json:"category" binding:"omitempty,min=1,max=50"`
 }

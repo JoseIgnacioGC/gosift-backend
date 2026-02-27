@@ -1,4 +1,5 @@
 /.vscode
+/cmd/**/__debug_bin.exe
 
 .env
 

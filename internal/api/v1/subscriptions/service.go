@@ -10,11 +10,12 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/JoseIgnacioGC/gosift-backend/internal/api/v1/users"
+	"github.com/JoseIgnacioGC/gosift-backend/internal/feed"
 )
 
 var (
 	errFeedAlreadySubscribed = errors.New("already subscribed to this feed")
-	// errSubscriptionNotFound  = errors.New("subscription not found")
+	errInvalidFeed           = errors.New("invalid or unreachable feed URL")
 )
 
 type service struct {
@@ -36,6 +37,21 @@ func (s *service) create(ctx context.Context, userID string, req CreateRequestDt
 		return nil, errFeedAlreadySubscribed
 	}
 
+	feedInfo, err := feed.Fetch(ctx, req.FeedURL)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %s", errInvalidFeed, err.Error())
+	}
+
+	title := req.Title
+	if title == "" {
+		title = feedInfo.Title
+	}
+
+	siteURL := req.SiteURL
+	if siteURL == "" {
+		siteURL = feedInfo.SiteURL
+	}
+
 	subID := uuid.New().String()
 	now := time.Now().UTC()
 
@@ -43,8 +59,8 @@ func (s *service) create(ctx context.Context, userID string, req CreateRequestDt
 		PK:        userPK,
 		SK:        SKPrefix + subID,
 		FeedURL:   req.FeedURL,
-		Title:     req.Title,
-		SiteURL:   req.SiteURL,
+		Title:     title,
+		SiteURL:   siteURL,
 		Category:  req.Category,
 		IsActive:  true,
 		CreatedAt: now,
